@@ -32,9 +32,13 @@ Google Cloud project, or anything installed in the browser.
 
 ```bash
 cd ~/Documents
-git clone https://git.taboolasyndication.com/scm/nexus/non-ticketed-activity-tracker-v2.git
+git clone -b main https://git.taboolasyndication.com/scm/nexus/non-ticketed-activity-tracker-v2.git
 cd non-ticketed-activity-tracker-v2
 ```
+
+> The `-b main` flag pins you to the working branch. The repo has a couple
+> of leftover branches (`tracker`, `master`) from an auto-created template
+> that you should ignore — `main` is the real project.
 
 ### Step 2. Create a virtualenv and install
 
@@ -138,11 +142,14 @@ Three options. Pick whichever is easiest for you.
 
 ### Option A — Use whatever AI / calendar tool you already have (recommended)
 
-Ask Ada / ChatGPT / Copilot / Reclaim / Notion / etc.:
+Ask **Ada** (or ChatGPT, Copilot, Reclaim, Notion, etc.) with this prompt —
+copy it verbatim, it produces exactly the format the converter expects:
 
-> "Fetch all my meetings from the last 7 days in JSON format. Exclude OOO,
-> birthdays, and office status updates. For each event include `title`,
-> `date` (YYYY-MM-DD), `time` (HH:MM - HH:MM IST), and `participants`."
+> Show me all meetings from my calendar for the last 7 days in a single
+> chronological sequence. List every instance of recurring meetings
+> separately (do not group them). For each meeting, provide the exact date,
+> time (with timezone), full title, and the list of participants. Present
+> the final result as a clean JSON array.
 
 Save the response as `raw-calendar.json`, then convert:
 

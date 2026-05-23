@@ -38,7 +38,7 @@ don't have to click through the form 20-30 times a week.
 **How to try it**
 
 ```bash
-git clone https://git.taboolasyndication.com/scm/nexus/non-ticketed-activity-tracker-v2.git
+git clone -b main https://git.taboolasyndication.com/scm/nexus/non-ticketed-activity-tracker-v2.git
 cd non-ticketed-activity-tracker-v2
 # then follow SETUP.md (5-minute walkthrough)
 ```
