@@ -1,0 +1,34 @@
+[
+  {
+    "subject": "Monday Team Huddle [Pub PS APAC]",
+    "duration_minutes": 30,
+    "activity_type": "Meeting",
+    "implementation_component": "None",
+    "task_type": "Meeting",
+    "task_sub_type": "Meeting",
+    "activity_currency": "USD",
+    "status": "Completed"
+  },
+  {
+    "subject": "Header bidding walkthrough with The Verge",
+    "duration_minutes": 60,
+    "activity_type": "Meeting",
+    "implementation_component": "Header bidding",
+    "revenue_generating": "Positive",
+    "task_type": "Meeting",
+    "task_sub_type": "Meeting",
+    "activity_currency": "USD",
+    "time_spent_in_minutes": 60,
+    "status": "Completed"
+  },
+  {
+    "subject": "Wrote troubleshooting runbook for Vignette",
+    "duration_minutes": 90,
+    "activity_type": "Internal PS work",
+    "internal_ps_work_type": "Knowledge documentation",
+    "task_type": "Internal PS work",
+    "task_sub_type": "Knowledge documentation",
+    "activity_currency": "USD",
+    "status": "Completed"
+  }
+]

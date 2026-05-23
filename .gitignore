@@ -1,0 +1,49 @@
+# Secrets / credentials — NEVER commit
+config.yaml
+credentials.json
+token.json
+*.pem
+
+# Local state
+.state/
+*.log
+
+# HAR files contain live session tokens — never commit
+*.har
+auth.json
+
+# Per-user data — your meetings, your session, your converted output
+events.json
+raw-calendar.json
+session.curl.sh
+*.curl.sh
+startFlow.curl.sh
+
+# Build artifacts — go to Nexus, not Git
+dist/
+build/
+*.whl
+*.tar.gz
+
+# Test fixtures (the per-user test event isn't useful in the repo)
+test-event.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.eggs/
+*.egg-info/
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/
+*.swp

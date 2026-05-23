@@ -1,0 +1,16 @@
+# Runtime deps for direct (non-pip-install) use.
+# If you `pip install activity-tracker`, these come from pyproject.toml.
+click>=8.1.7
+requests>=2.32.0
+rich>=13.7.1
+PyYAML>=6.0.2
+python-dateutil>=2.9.0
+
+# Optional — only needed for `fetch-calendar` (Google Calendar OAuth):
+google-api-python-client>=2.130.0
+google-auth>=2.30.0
+google-auth-oauthlib>=1.2.0
+google-auth-httplib2>=0.2.0
+
+# Optional — reserved for the standard Salesforce REST path (not used by flow-create):
+simple-salesforce>=1.12.6

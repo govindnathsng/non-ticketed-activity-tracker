@@ -1,0 +1,156 @@
+{
+  "_comment": "Annotated template for events.json — every field the script accepts. The script runs TWO phases per event: (1) creates the Task via the 'New PS Task' Flow, then (2) updates standard Task fields via inline-save. Below, fields are grouped by phase.",
+
+  "_form_label": "New PS Task",
+  "_flow_dev_name": "New_PS_Task",
+  "_quick_action": "Delivery_Task__c.New_PS_Task",
+  "_underlying_sobject": "Task",
+  "_record_type": "PS Task (0123o000001QHSJAA4)",
+
+  "_phase_1_flow_inputs": {
+    "_description": "These drive the Flow form you'd normally fill in. They produce the new Task record.",
+
+    "subject": {
+      "required": true,
+      "aliases": ["summary"],
+      "ui_label": "Description (in the form) → Subject (on the Task)",
+      "description": "What appears as the Task Subject. Becomes the headline you see in reports.",
+      "type": "string",
+      "example": "Testing AUtomation"
+    },
+    "duration_minutes": {
+      "required": true,
+      "aliases": ["time_spent_in_minutes"],
+      "form_field": "Time_Spent_in_Minutes",
+      "type": "integer",
+      "default": 30
+    },
+    "activity_type": {
+      "required": true,
+      "form_field": "actvty (Activity Type)",
+      "type": "enum",
+      "default": "Meeting",
+      "allowed_values": ["Meeting", "Account Exploration and Maintenance", "Internal PS work"]
+    },
+    "implementation_component": {
+      "required": "when activity_type != 'Internal PS work'",
+      "form_field": "Implementation_Cmp",
+      "default": "None",
+      "allowed_values": [
+        "Adx Demand", "Backstage API", "Bulk Account Creation",
+        "Client Meeting / Pre-sales", "Configuration", "Consultation",
+        "Custom Tracking Params", "Deeper Dive", "Discrepancy", "Explore More",
+        "Feed", "Footer Overlay", "HP4U (Homepage for you)", "Header bidding",
+        "Newsroom", "Next Up", "Payoneer Setup", "Push", "QA", "Read More",
+        "Read More on AMP", "Recommendations API", "Reporting API", "TRECS",
+        "Taboola News", "Taboola News Aggregator Setup", "Video Reel",
+        "Video Unit", "Vignette", "Widget", "None"
+      ]
+    },
+    "internal_ps_work_type": {
+      "required": "when activity_type == 'Internal PS work'",
+      "allowed_values": ["Personal project", "Learning and development", "Knowledge documentation"]
+    },
+    "revenue_generating": {
+      "required": true,
+      "form_field": "Revenue_Generating_Activity",
+      "default": "None",
+      "allowed_values": ["Positive", "Negative", "None"]
+    },
+    "related_to": {
+      "required": false,
+      "form_field": "Related_to_picklist",
+      "allowed_values": ["Account", "Delivery Task", "Delivery Project", "Backstage Account"]
+    },
+    "account_id": {"required": "when related_to=='Account'", "type": "SF Id starting with 001"},
+    "delivery_project_id": {"required": "when related_to=='Delivery Project'"},
+    "delivery_task_id": {"required": "when related_to=='Delivery Task'"},
+    "backstage_account_id": {"required": "when related_to=='Backstage Account'"},
+    "recordId": {"required": false, "description": "Override parent Delivery_Task__c. Defaults to whatever was in your session."}
+  },
+
+  "_phase_2_post_create_overrides": {
+    "_description": "OPTIONAL. After the Flow creates the Task, these get written via inline-save (same way Lightning UI does it). Leave any out and the Flow's default stays.",
+
+    "task_type": {
+      "ui_label": "Task Type",
+      "task_field": "Task_Type__c",
+      "example": "Meeting",
+      "note": "If not set, Flow uses your activity_type."
+    },
+    "task_sub_type": {
+      "ui_label": "Task Sub Type",
+      "task_field": "Task_Sub_Type__c",
+      "example": "Meeting",
+      "note": "If not set, Flow uses your activity_type."
+    },
+    "activity_currency": {
+      "aliases": ["currency"],
+      "ui_label": "Activity Currency",
+      "task_field": "CurrencyIsoCode",
+      "example": "USD"
+    },
+    "time_spent_in_minutes": {
+      "ui_label": "Time Spent in Minutes",
+      "task_field": "Time_Spent_in_minutes_integer__c",
+      "type": "integer",
+      "note": "Doubles as Phase-1 duration_minutes if duration_minutes isn't set separately."
+    },
+    "description": {
+      "ui_label": "Description (long-form text on Task)",
+      "task_field": "Description",
+      "note": "This is the Task.Description text field — NOT the Flow's Description input (which maps to Subject). Only set if you want extra notes beyond the Subject."
+    },
+    "status": {
+      "ui_label": "Status",
+      "task_field": "Status",
+      "example": "Completed",
+      "allowed_values": ["Not Started", "In Progress", "Completed", "Waiting on someone else", "Deferred"]
+    },
+    "priority": {
+      "task_field": "Priority",
+      "example": "Normal",
+      "allowed_values": ["High", "Normal", "Low"]
+    },
+    "activity_date": {
+      "aliases": ["date"],
+      "ui_label": "Due Date / Activity Date",
+      "task_field": "ActivityDate",
+      "type": "YYYY-MM-DD",
+      "example": "2026-05-23"
+    },
+    "extra_fields": {
+      "type": "object",
+      "description": "Any other Task API field name → value pairs. Use sparingly.",
+      "example": {"Lead_Account__c": "0013o00000ABCDEAAA"}
+    }
+  },
+
+  "_examples": [
+    {
+      "_label": "Minimal — only required (Flow fills defaults)",
+      "subject": "Testing AUtomation",
+      "duration_minutes": 15
+    },
+    {
+      "_label": "Full demo — every field user asked about",
+      "subject": "Testing AUtomation",
+      "duration_minutes": 30,
+      "activity_type": "Meeting",
+      "implementation_component": "None",
+      "revenue_generating": "None",
+      "task_type": "Meeting",
+      "task_sub_type": "Meeting",
+      "activity_currency": "USD",
+      "time_spent_in_minutes": 30,
+      "status": "Completed",
+      "priority": "Normal",
+      "activity_date": "2026-05-23",
+      "description": "Automation smoke-test — verifying end-to-end flow with field overrides"
+    },
+    {
+      "_label": "Bulk usage — array of events, one Task per entry",
+      "_note": "Just repeat the object in a list; the script handles them sequentially."
+    }
+  ]
+}

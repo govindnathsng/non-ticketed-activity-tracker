@@ -1,0 +1,89 @@
+# =====================================================================
+#  Non-Ticketed Activity Tracker — example config
+#  Copy this to `config.yaml` and fill in your values. config.yaml is
+#  gitignored so secrets stay local.
+# =====================================================================
+
+google_calendar:
+  # Path to OAuth client secret JSON downloaded from Google Cloud Console.
+  # See README for the 2-minute setup.
+  credentials_file: ./credentials.json
+  # Cached OAuth token (auto-created on first run).
+  token_file: ./token.json
+  # Which calendar to pull from. "primary" = your main Google Calendar.
+  # You can also use a calendar ID like "abc123@group.calendar.google.com".
+  calendar_id: primary
+  # Timezone used to interpret event start/end (IANA name).
+  timezone: Asia/Kolkata
+
+salesforce:
+  # Auth method: "password" (username + password + security token) or
+  # "oauth_jwt" (server-to-server with a connected app). Password is
+  # easiest to get started.
+  auth_method: password
+  username: you@taboola.com
+  password: YOUR_SALESFORCE_PASSWORD
+  security_token: YOUR_SALESFORCE_SECURITY_TOKEN
+  # "login" for production / Developer Edition, "test" for sandbox.
+  domain: login
+
+  # ----- Task field mapping -------------------------------------------
+  # Every Google Calendar event becomes a Salesforce Task. These are the
+  # field values written to that Task. Adjust to match how your team
+  # classifies non-ticketed activities (so the existing Report picks
+  # them up).
+  task_defaults:
+    Status: Completed
+    Priority: Normal
+    Type: Meeting        # Will be overridden per-event if rules below match
+    # If your org has a custom picklist for non-ticketed work, e.g.
+    # Activity_Category__c: "Non-Ticketed"
+    # add it here and it'll be applied to every synced Task.
+
+  # Optional: route activities to specific Types based on event keywords.
+  # First match wins. Useful so calls/meetings/consultations show up
+  # correctly in the report.
+  type_rules:
+    - match: ["call", "phone"]
+      type: Call
+    - match: ["consult", "consultation"]
+      type: Other
+    - match: ["meeting", "sync", "standup", "1:1", "review"]
+      type: Meeting
+
+  # If you have a custom field on Task to store the Google Calendar
+  # event ID (recommended — gives you bulletproof dedup), put its API
+  # name here. Leave blank to fall back to a [GCAL:<id>] marker in the
+  # Description (still reliable, no schema change required).
+  external_id_field: ""    # e.g. "Google_Event_Id__c"
+
+  # If you have a custom hours field on Task, set its API name here
+  # and the script will write event duration in hours (decimal).
+  # Leave blank to skip — duration is always also written to the
+  # standard CallDurationInSeconds field.
+  hours_field: ""          # e.g. "Time_Spent_Hours__c"
+
+# ---------- What to sync --------------------------------------------------
+sync:
+  # How many days back to look on a normal run.
+  lookback_days: 7
+  # Skip all-day events (vacations, OOO blocks, etc.).
+  skip_all_day: true
+  # Skip events you declined.
+  skip_declined: true
+  # Skip events shorter than this (in minutes).
+  min_duration_minutes: 5
+  # Skip events whose title matches any of these (case-insensitive
+  # substring). Use this to exclude TICKETED work that's already
+  # logged elsewhere.
+  exclude_title_keywords:
+    - "JIRA-"
+    - "TICKET-"
+    - "Focus time"
+    - "Lunch"
+    - "OOO"
+  # Skip events you only attended as an optional/observer attendee.
+  skip_optional_attendee: false
+  # Where to keep the local list of already-synced event IDs (used
+  # only when external_id_field is blank).
+  state_file: ./.state/synced_events.json
