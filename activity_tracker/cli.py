@@ -460,9 +460,9 @@ def fetch_calendar_cmd(config_path: str, days: int, since: str | None, until: st
     console.print()
     console.print("[dim]Next:[/dim]")
     console.print(f"  [dim]# Preview without sending:[/dim]")
-    console.print(f"  python run.py flow-create --curl session.curl.sh --input {out_path} --dry-run")
+    console.print(f"  activity-tracker flow-create --curl session.curl.sh --input {out_path} --dry-run")
     console.print(f"  [dim]# Push to Salesforce:[/dim]")
-    console.print(f"  python run.py flow-create --curl session.curl.sh --input {out_path}")
+    console.print(f"  activity-tracker flow-create --curl session.curl.sh --input {out_path}")
 
 
 @cli.command(name="convert-calendar")
@@ -588,8 +588,8 @@ def convert_calendar_cmd(in_path: str, out_path: str, default_activity_type: str
     console.print(f"[green]✓ wrote[/green] {len(out)} events → [bold]{out_path}[/bold]")
     console.print()
     console.print("[dim]Next:[/dim]")
-    console.print(f"  python run.py flow-create --curl session.curl.sh --input {out_path} --dry-run")
-    console.print(f"  python run.py flow-create --curl session.curl.sh --input {out_path}")
+    console.print(f"  activity-tracker flow-create --curl session.curl.sh --input {out_path} --dry-run")
+    console.print(f"  activity-tracker flow-create --curl session.curl.sh --input {out_path}")
 
 
 @cli.command(name="update-task")
@@ -609,7 +609,7 @@ def update_task_cmd(har_path: str | None, curl_path: str | None,
     inline-edit-style update via the same captured session.
 
     Example:
-      python run.py update-task --curl session.curl.sh --task-id 00TRg00000u1aPPMAY \\
+      activity-tracker update-task --curl session.curl.sh --task-id 00TRg00000u1aPPMAY \\
           --field Subject='Testing AUtomation' --field Status=Completed
     """
     if not har_path and not curl_path:
