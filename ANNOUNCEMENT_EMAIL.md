@@ -36,9 +36,17 @@ don't have to click through the form 20-30 times a week.
 - Weekly use after that: **3 commands, ~30 seconds**
 
 **How to try it**
-Setup guide is in `SETUP.md` inside the project folder. I'll drop the folder
-in our shared drive at `[path/to/shared/location]` later today. Ping me on
-Slack and I'll help you get the first run going.
+
+```bash
+git clone https://git.taboolasyndication.com/scm/nexus/non-ticketed-activity-tracker-v2.git
+cd non-ticketed-activity-tracker-v2
+# then follow SETUP.md (5-minute walkthrough)
+```
+
+Repo browser:
+<https://git.taboolasyndication.com/projects/NEXUS/repos/non-ticketed-activity-tracker-v2>
+
+Ping me on Slack and I'll help you get the first run going.
 
 Happy to walk anyone through it 1:1 — should take 10 minutes start-to-finish.
 
@@ -89,8 +97,9 @@ A small command-line tool (Python, no external services) that:
 
 **Rollout proposal**
 
-- Project lives in a self-contained folder (Python + a few config files).
-  Setup on a fresh laptop is ~5 minutes; documented in `SETUP.md`.
+- Project lives in our internal Bitbucket (`NEXUS/non-ticketed-activity-tracker-v2`).
+  Setup on a fresh laptop is ~5 minutes (`git clone` + `pip install -e .`);
+  documented in `SETUP.md`.
 - Suggest sharing with **APAC Pub PS Impl** first as a soft launch (~6 people),
   collect feedback for 1-2 weeks, then expand if useful.
 - Zero infra/cost — runs entirely on the user's laptop.
@@ -120,17 +129,17 @@ Govind
 > Salesforce session once a day. Full setup is ~5 mins, weekly use is 3
 > commands.
 >
-> Drop me a DM if you want to try it on your machine. I'll share the folder
-> + setup guide. 🙏
+> Repo + setup guide:
+> <https://git.taboolasyndication.com/projects/NEXUS/repos/non-ticketed-activity-tracker-v2>
+> Drop me a DM if you want me to walk you through the first run. 🙏
 
 ---
 
 ## Tips before you send
 
-- ✅ Attach the project as a **zip** or share the **folder path** in your
-  internal storage. Don't put it in a public repo (the README + sample files
-  are safe to share, but no one's `session.curl.sh` should ever leave their
-  own machine).
+- ✅ Share the **Bitbucket repo link** (already internal-only). No one's
+  `session.curl.sh` should ever leave their own machine — `.gitignore`
+  already prevents commits, but reinforce the message verbally too.
 - ✅ Mention security explicitly. Most non-engineers will worry "is this
   bypassing security?" — the answer is **no**: it uses each user's own
   authenticated browser session, the same one Salesforce already trusts.
