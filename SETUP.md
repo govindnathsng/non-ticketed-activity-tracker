@@ -45,6 +45,7 @@ cd non-ticketed-activity-tracker-v2
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+pip install --upgrade pip setuptools wheel
 pip install -e .
 ```
 
@@ -52,6 +53,13 @@ pip install -e .
 > package **and** register a global `activity-tracker` command inside this
 > venv. If you `git pull` later, the command picks up the latest code
 > automatically (no re-install).
+>
+> ⚠️ The `pip install --upgrade pip setuptools wheel` line is **not optional**.
+> Older `pip` (< 21.3) or `setuptools` (< 64) will print
+> `Successfully installed activity-tracker-0.1.0` but silently skip wiring
+> the source folder onto `sys.path`, so `activity-tracker` then fails with
+> `ModuleNotFoundError: No module named 'activity_tracker'`. Upgrading first
+> avoids that trap.
 
 ### Step 3. Verify
 
@@ -255,6 +263,7 @@ If `pyproject.toml` changed (new deps), refresh:
 
 ```bash
 source .venv/bin/activate
+pip install --upgrade pip setuptools wheel
 pip install -e .
 ```
 
@@ -269,6 +278,7 @@ pip install -e .
 | `Flow validation errors: …` | Salesforce rejected a field combo (e.g. wrong Implementation Component for the Activity Type) | The error names the failing field. Fix it in `events.json` and re-run. |
 | Subject shows as "Meeting" not your text | Should not happen — the script force-sets Subject in phase 2 | If it does, run `update-task` with `--field "Subject=…"` |
 | `command not found: activity-tracker` | Your venv isn't active | `source .venv/bin/activate` (run from the project folder) |
+| `ModuleNotFoundError: No module named 'activity_tracker'` (right after install) | Old `pip` / `setuptools` did a half-broken editable install | `pip uninstall -y activity-tracker && pip install --upgrade pip setuptools wheel && pip install -e .` |
 | `bash: python: command not found` | macOS calls it `python3` | Use `python3` for the venv create step. After activation, just `python` works. |
 | Script worked once, now hangs | Network blocked the Salesforce API mid-call | Ctrl-C, check VPN / Wi-Fi, re-run |
 
