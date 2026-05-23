@@ -93,6 +93,12 @@ your personal "Non-Ticketed Activities" Delivery Task. Find it via:
 > ⚠️ **Important:** The script attaches every new PS Task to whichever
 > Delivery Task you're viewing when you capture the session. Use the
 > *right* parent so your records land where the report expects them.
+>
+> If you've already captured a session from the wrong tab, you don't have
+> to recapture — pass `--parent-id <a2d…>` to `extract-auth` /
+> `flow-create` to override the parent for the run. The expected ID is
+> printed by `extract-auth` as `recordId (parent)` and shows up in your
+> Salesforce URL when viewing the Delivery Task.
 
 ### Step 2. Open DevTools → Network tab
 
@@ -219,6 +225,16 @@ Each task takes ~4 seconds (2 round-trips: Flow create + field update).
 
 When done, open your Salesforce report and the new rows are there.
 
+> 💡 **Wrong parent showing in the preview?** The "Parent record" line
+> in the preview is the Delivery Task every new PS Task will be attached
+> to. If it's wrong, either recapture the session from the right tab
+> (Part 2) *or* pass `--parent-id a2dRg000...` to override for this run:
+>
+> ```bash
+> activity-tracker flow-create --curl session.curl.sh --input events.json \
+>     --parent-id a2dRg000007hIthIAE --dry-run
+> ```
+
 ---
 
 ## Part 5 — Fix an existing Task (optional)
@@ -279,6 +295,7 @@ pip install -e .
 | Subject shows as "Meeting" not your text | Should not happen — the script force-sets Subject in phase 2 | If it does, run `update-task` with `--field "Subject=…"` |
 | `command not found: activity-tracker` | Your venv isn't active | `source .venv/bin/activate` (run from the project folder) |
 | `ModuleNotFoundError: No module named 'activity_tracker'` (right after install) | Old `pip` / `setuptools` did a half-broken editable install | `pip uninstall -y activity-tracker && pip install --upgrade pip setuptools wheel && pip install -e .` |
+| Tasks created under the wrong Delivery Task | The session was captured while viewing a different Delivery Task | Either recapture from the right tab (Part 2) or re-run with `--parent-id <correct a2d… id>`. The current parent shows up in the `flow-create` preview header. |
 | `bash: python: command not found` | macOS calls it `python3` | Use `python3` for the venv create step. After activation, just `python` works. |
 | Script worked once, now hangs | Network blocked the Salesforce API mid-call | Ctrl-C, check VPN / Wi-Fi, re-run |
 

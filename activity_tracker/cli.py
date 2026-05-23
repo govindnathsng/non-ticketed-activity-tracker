@@ -182,8 +182,12 @@ def test_salesforce(config_path: str) -> None:
               help="Optional path to save the auth bundle as JSON (handy for re-use).")
 @click.option("--show-curl/--no-show-curl", default=True, show_default=True,
               help="Print a ready-to-use cURL command (Postman import-friendly).")
+@click.option("--parent-id", "parent_id", default=None,
+              help="Override the parent Delivery Task ID (a2d…) parsed from the session. "
+                   "Use this if you captured the cURL from the wrong tab and don't want to recapture.")
 def extract_auth_cmd(har_path: str | None, curl_path: str | None,
-                     out_path: str | None, show_curl: bool) -> None:
+                     out_path: str | None, show_curl: bool,
+                     parent_id: str | None) -> None:
     """Option 1 — Extract session/auth values from a HAR or cURL dump and print them.
 
     Use this to verify your captured session in Postman before running the
@@ -192,6 +196,8 @@ def extract_auth_cmd(har_path: str | None, curl_path: str | None,
     if not har_path and not curl_path:
         raise click.UsageError("Provide either --har or --curl.")
     auth = load_auth(curl_path or har_path)
+    if parent_id:
+        auth.record_id = parent_id.strip()
 
     console.rule("[bold]Salesforce Aura session — extracted from HAR")
     console.print(f"[cyan]host[/cyan]                  : {auth.host}")
@@ -242,10 +248,15 @@ def extract_auth_cmd(har_path: str | None, curl_path: str | None,
               help="Show what would be sent without hitting Salesforce.")
 @click.option("--limit", type=int, default=0,
               help="Only process the first N events (handy for testing). 0 = all.")
+@click.option("--parent-id", "parent_id", default=None,
+              help="Override the parent Delivery Task ID (a2d…) parsed from the session. "
+                   "Use this when the captured session points at the wrong parent and you "
+                   "don't want to recapture from the right tab.")
 @click.option("-v", "--verbose", is_flag=True)
 def flow_create_cmd(har_path: str | None, curl_path: str | None,
                     input_path: str, cookie_string: str,
-                    dry_run: bool, limit: int, verbose: bool) -> None:
+                    dry_run: bool, limit: int, parent_id: str | None,
+                    verbose: bool) -> None:
     """Option 2 — Replay the 'New PS Task' Flow for every event in the JSON.
 
     The JSON file should look like::
@@ -260,6 +271,9 @@ def flow_create_cmd(har_path: str | None, curl_path: str | None,
     if not har_path and not curl_path:
         raise click.UsageError("Provide either --har or --curl.")
     auth = load_auth(curl_path or har_path)
+    original_parent = auth.record_id
+    if parent_id:
+        auth.record_id = parent_id.strip()
     tasks = load_events_json(input_path)
     if limit:
         tasks = tasks[:limit]
@@ -267,7 +281,11 @@ def flow_create_cmd(har_path: str | None, curl_path: str | None,
     console.rule("[bold]New PS Task — Flow replay")
     console.print(f"[dim]Host[/dim]               : {auth.host}")
     console.print(f"[dim]Quick action[/dim]       : {auth.quick_action_api_name}")
-    console.print(f"[dim]Parent record[/dim]      : {auth.record_id}")
+    if parent_id and parent_id.strip() != original_parent:
+        console.print(f"[dim]Parent record[/dim]      : [yellow]{auth.record_id}[/yellow] "
+                      f"[dim](overrode session value {original_parent})[/dim]")
+    else:
+        console.print(f"[dim]Parent record[/dim]      : {auth.record_id}")
     console.print(f"[dim]Events to create[/dim]   : {len(tasks)}")
     console.print(f"[dim]Mode[/dim]               : {'DRY RUN' if dry_run else 'LIVE'}")
     console.print()
