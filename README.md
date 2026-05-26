@@ -88,7 +88,7 @@ Run `activity-tracker --help` (or any subcommand `--help`) for full options.
 ## Repo layout
 
 ```
-non-ticketed-activity-tracker-v2/
+non-ticketed-activity-tracker/
 ├── README.md                  ← you are here
 ├── SETUP.md                   ← full step-by-step install guide
 ├── ANNOUNCEMENT_EMAIL.md      ← draft emails / Slack copy for rollout
@@ -132,7 +132,7 @@ None of these ever get committed (see `.gitignore`).
 ## Updating
 
 ```bash
-cd ~/Documents/non-ticketed-activity-tracker-v2
+cd ~/Documents/non-ticketed-activity-tracker
 git pull
 ```
 

@@ -59,12 +59,12 @@ a script instead of mouse clicks.
 **How to try it**
 
 ```bash
-git clone -b main [REPO_URL]
-cd non-ticketed-activity-tracker-v2
+git clone -b main https://github.com/govindnathsng/non-ticketed-activity-tracker.git
+cd non-ticketed-activity-tracker
 # Then follow SETUP.md — 5-min walkthrough.
 ```
 
-Repo: [REPO_URL]  
+Repo: <https://github.com/govindnathsng/non-ticketed-activity-tracker>
 Setup guide: see `SETUP.md` in the repo.
 
 Ping me on Slack and I'll do a 10-minute pairing to get your first run
@@ -128,8 +128,9 @@ user's own laptop) that:
 
 **Rollout proposal**
 
-- Code + setup guide already in our internal git
-  (`NEXUS/non-ticketed-activity-tracker-v2`).
+- Code + setup guide are in a private GitHub repo
+  (`github.com/govindnathsng/non-ticketed-activity-tracker`); access
+  granted per-user.
 - Fresh-laptop setup: ~5 minutes (`git clone` + `pip install -e .`),
   fully documented in `SETUP.md`.
 - Suggest a **2-week soft-launch with APAC Pub PS Impl (~6 people)**,
@@ -167,7 +168,7 @@ Govind
 >
 > Setup is ~5 minutes the first time, ~30 seconds/week after that.
 >
-> Repo + setup guide: [REPO_URL]
+> Repo + setup guide: <https://github.com/govindnathsng/non-ticketed-activity-tracker>
 >
 > DM me if you'd like a 10-min walkthrough for your first run. 🙏
 
@@ -175,7 +176,9 @@ Govind
 
 ## Tips before you send
 
-- ✅ Replace `[REPO_URL]` with the actual internal git link.
+- ✅ Before sending: add each teammate as a collaborator on
+  <https://github.com/govindnathsng/non-ticketed-activity-tracker> so
+  the clone command in the email actually works for them.
 - ✅ Lead with the **manual JSON step** — set expectations that GCal
   auto-pull isn't done yet. Underpromising here avoids "I thought it
   read my calendar?" follow-ups.

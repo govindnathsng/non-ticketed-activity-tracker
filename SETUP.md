@@ -19,7 +19,7 @@ filled out the form by hand.
 | macOS / Linux machine | Windows: use WSL or Git Bash, same commands work |
 | Python 3.10+ | Already on every Mac. Check: `python3 --version` |
 | Salesforce Lightning access | Whatever account you'd use to create a PS Task manually |
-| Git access to the repo | The Bitbucket link below |
+| Git access to the repo | The GitHub link below |
 
 You **don't** need: any Salesforce admin perms, security token, password,
 Google Cloud project, or anything installed in the browser.
@@ -32,8 +32,8 @@ Google Cloud project, or anything installed in the browser.
 
 ```bash
 cd ~/Documents
-git clone -b main https://git.taboolasyndication.com/scm/nexus/non-ticketed-activity-tracker-v2.git
-cd non-ticketed-activity-tracker-v2
+git clone -b main https://github.com/govindnathsng/non-ticketed-activity-tracker.git
+cd non-ticketed-activity-tracker
 ```
 
 > The `-b main` flag pins you to the working branch. The repo has a couple
@@ -122,7 +122,7 @@ like `aura?r=…&aura.RecordUi…`.
 ### Step 5. Save it as `session.curl.sh`
 
 ```bash
-cd ~/Documents/non-ticketed-activity-tracker-v2
+cd ~/Documents/non-ticketed-activity-tracker
 pbpaste > session.curl.sh        # macOS — pastes whatever's in clipboard
 ```
 
@@ -277,7 +277,7 @@ Task → Fields**. Most-used ones:
 ## Updating the tool later
 
 ```bash
-cd ~/Documents/non-ticketed-activity-tracker-v2
+cd ~/Documents/non-ticketed-activity-tracker
 git pull
 # `pip install -e .` already linked the source folder — no re-install needed.
 ```
@@ -327,7 +327,7 @@ pip install -e .
 ## Reference: file layout
 
 ```
-non-ticketed-activity-tracker-v2/
+non-ticketed-activity-tracker/
 ├── README.md                  ← project overview
 ├── SETUP.md                   ← you are here
 ├── pyproject.toml             ← package config (installs `activity-tracker` command)

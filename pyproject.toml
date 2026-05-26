@@ -57,8 +57,8 @@ dev = [
 activity-tracker = "activity_tracker.cli:main"
 
 [project.urls]
-Source = "https://git.taboolasyndication.com/projects/NEXUS/repos/non-ticketed-activity-tracker-v2"
-Setup  = "https://git.taboolasyndication.com/projects/NEXUS/repos/non-ticketed-activity-tracker-v2/browse/SETUP.md"
+Source = "https://github.com/govindnathsng/non-ticketed-activity-tracker"
+Setup  = "https://github.com/govindnathsng/non-ticketed-activity-tracker/blob/main/SETUP.md"
 
 # ---------- packaging ----------
 [tool.setuptools.packages.find]
