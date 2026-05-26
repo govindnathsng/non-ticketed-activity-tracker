@@ -36,9 +36,8 @@ git clone -b main https://github.com/govindnathsng/non-ticketed-activity-tracker
 cd non-ticketed-activity-tracker
 ```
 
-> The `-b main` flag pins you to the working branch. The repo has a couple
-> of leftover branches (`tracker`, `master`) from an auto-created template
-> that you should ignore — `main` is the real project.
+> The `-b main` flag is harmless (the repo only has `main`) but pins the
+> branch explicitly in case more branches are added later.
 
 ### Step 2. Create a virtualenv and install
 
