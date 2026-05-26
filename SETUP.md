@@ -70,9 +70,11 @@ activity-tracker --help
 You should see a list of commands (`extract-auth`, `flow-create`,
 `update-task`, `convert-calendar`, …). That's it — install done.
 
-> 📅 **Want the Google Calendar integration too?** Run
-> `pip install -e '.[gcal]'` instead of step 2. Most people don't need this
-> — `convert-calendar` works fine with a JSON dump from any AI assistant.
+> 📅 **What about pulling from Google Calendar automatically?**
+> There is a `fetch-calendar` command in the codebase, but it is **not
+> production-ready yet** (token refresh + filter rules are still being
+> finished). For now, use Option A in Part 3 — give the tool a JSON dump
+> from your AI assistant. It takes ~30 seconds and works reliably.
 
 ---
 
@@ -152,7 +154,7 @@ If any of those are missing, repeat Step 3-5 with a different aura request.
 
 ## Part 3 — Prepare your events JSON
 
-Three options. Pick whichever is easiest for you.
+Two supported options. Pick whichever is easiest for you.
 
 ### Option A — Use whatever AI / calendar tool you already have (recommended)
 
@@ -176,18 +178,7 @@ The converter computes duration from your time strings, drops
 (Meeting / Completed / USD / Normal). Output is a nice table you can
 sanity-check.
 
-### Option B — Pull Google Calendar directly (needs Google OAuth setup)
-
-Only if you installed with `pip install -e '.[gcal]'` above.
-
-```bash
-activity-tracker fetch-calendar --days 7 --out events.json
-```
-
-First run opens a browser for OAuth consent (read-only Calendar scope).
-After that, the token caches forever in `token.json`.
-
-### Option C — Write `events.json` by hand
+### Option B — Write `events.json` by hand
 
 Minimum required is just `subject` + `duration_minutes`:
 
@@ -203,6 +194,13 @@ Minimum required is just `subject` + `duration_minutes`:
 See `events.schema.json` in the repo for every supported field and allowed
 values (Activity Type, Implementation Component, Status, etc.).
 
+> 🚧 **Heads-up on Google Calendar auto-pull.** There is a
+> `fetch-calendar` command in the code that uses Google OAuth to pull
+> meetings directly, but it's **still experimental** — token refresh and
+> the filter rules aren't finished. Until that's done, stick with
+> Option A (paste JSON from your AI assistant). It takes ~30 seconds and
+> avoids the OAuth setup entirely.
+
 ---
 
 ## Part 4 — Push to Salesforce
@@ -213,11 +211,20 @@ Always preview before pushing.
 # 1. Dry-run — table view, no requests sent
 activity-tracker flow-create --curl session.curl.sh --input events.json --dry-run
 
-# 2. Single-event test — creates ONE task, lets you verify it on Salesforce
+# 2. Single-event smoke test — creates ONE task so you can verify it in Salesforce
 activity-tracker flow-create --curl session.curl.sh --input events.json --limit 1
 
 # 3. Full push — everything in events.json
 activity-tracker flow-create --curl session.curl.sh --input events.json
+```
+
+If the captured session points at the wrong Delivery Task, pass
+`--parent-id <a2d…>` to override for this run without re-capturing:
+
+```bash
+# Override the parent for any of the three commands above, e.g.:
+activity-tracker flow-create --curl session.curl.sh --input events.json \
+    --parent-id a2dRg000007hIthIAE --dry-run
 ```
 
 Each task takes ~4 seconds (2 round-trips: Flow create + field update).
@@ -311,8 +318,9 @@ pip install -e .
 - The script only creates PS Tasks attached to the parent Delivery Task that
   was active in your browser when you captured the session. It cannot read,
   delete, or modify anything else.
-- The Google Calendar integration (Option B above) uses a read-only OAuth
-  scope (`calendar.readonly`).
+- The experimental Google Calendar path (`fetch-calendar`) uses a
+  read-only OAuth scope (`calendar.readonly`) — it never writes back
+  to your calendar. It also runs only when you invoke it explicitly.
 
 ---
 

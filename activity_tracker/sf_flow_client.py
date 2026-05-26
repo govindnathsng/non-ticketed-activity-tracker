@@ -416,11 +416,38 @@ class AuraFlowClient:
 
             task_id, success_msg = _extract_task_id(stepped)
 
-            # 4. FINISH so the org closes the interview cleanly.
+            # If we got a success-screen markup (task_id extracted), the
+            # interview is already done — but the browser still sends a final
+            # navigateFlow to dismiss the success screen. If we didn't get a
+            # task_id and the interview is still STARTED, the Flow added a new
+            # required field on screen 1 and silently looped back — surface that
+            # as a hard failure instead of pretending it succeeded.
+            if not task_id and stepped.get("interviewStatus") == "STARTED":
+                missing = [
+                    f.get("name") or f.get("label")
+                    for f in (stepped.get("fields") or [])
+                    if f.get("isRequired") and f.get("value") in (None, "")
+                    and f.get("fieldType") in ("INPUT", "DROPDOWN", "CHECKBOXES")
+                ]
+                hint = f" (likely missing required field(s): {missing})" if missing else ""
+                return FlowResult(
+                    False,
+                    error=("Flow returned to screen 1 without creating the Task — "
+                           "Salesforce probably added a new required field." + hint),
+                    raw_responses=raw,
+                )
+
+            # 4. FINISH (or NEXT, depending on what the success screen allows)
+            #    so the org closes the interview cleanly. Errors here are
+            #    cosmetic — the Task already exists — so we log and move on.
             state2 = stepped.get("serializedEncodedState") or ""
             if state2:
-                finished = self.navigate_flow(state2, action="FINISH", fields=[])
-                raw.append({"step": "navigateFlow:FINISH", "response": finished})
+                try:
+                    finished = self.navigate_flow(state2, action="FINISH", fields=[])
+                    raw.append({"step": "navigateFlow:FINISH", "response": finished})
+                except FlowReplayError as e:
+                    log.debug("FINISH not accepted (Task already created): %s", e)
+                    raw.append({"step": "navigateFlow:FINISH", "error": str(e)})
 
             # 5. Optional post-create field updates (saveRecord) —
             #    standard Task fields the user wants to override.
@@ -506,6 +533,12 @@ def _build_screen1_fields(task: TaskInput) -> list[dict[str, Any]]:
     else:
         fields.append({"field": "Internal_PS_Work_Type", "value": None, "isVisible": False})
 
+    # NEW (Salesforce flow update ~May 2026): a separate required `Subject` field
+    # was added on screen 1. Previously the Flow used `Description` as the
+    # headline; now `Subject` is the headline and `Description` is the long text.
+    # We populate both with the subject by default; the long description (if the
+    # caller passed one) is force-set in phase 2 via saveRecord.
+    fields.append({"field": "Subject", "value": task.subject, "isVisible": True})
     fields.append({"field": "Description", "value": task.subject, "isVisible": True})
     fields.append({
         "field": f"Revenue_Generating_Activity.revenue.{task.revenue_generating}.selected",

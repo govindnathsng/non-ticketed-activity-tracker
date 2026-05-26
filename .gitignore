@@ -1,49 +1,62 @@
-# Secrets / credentials — NEVER commit
-config.yaml
+# ──────────────────────────────────────────────────────────────────────────
+# Per-user secrets & live session material — NEVER commit
+# ──────────────────────────────────────────────────────────────────────────
+session.curl.sh
+*.curl.sh
+startFlow.curl.sh
+*.har
+auth.json
 credentials.json
 token.json
 *.pem
 
-# Local state
+# ──────────────────────────────────────────────────────────────────────────
+# Per-user data (your meetings, your local config)
+# ──────────────────────────────────────────────────────────────────────────
+config.yaml
+raw-calendar.json
+events.json
+test-event.json
+test-events.json
+
+# ──────────────────────────────────────────────────────────────────────────
+# Local state & logs
+# ──────────────────────────────────────────────────────────────────────────
 .state/
 *.log
 
-# HAR files contain live session tokens — never commit
-*.har
-auth.json
-
-# Per-user data — your meetings, your session, your converted output
-events.json
-raw-calendar.json
-session.curl.sh
-*.curl.sh
-startFlow.curl.sh
-
-# Build artifacts — go to Nexus, not Git
+# ──────────────────────────────────────────────────────────────────────────
+# Build / packaging artifacts
+# ──────────────────────────────────────────────────────────────────────────
 dist/
 build/
 *.whl
 *.tar.gz
+*.egg-info/
+.eggs/
 
-# Test fixtures (the per-user test event isn't useful in the repo)
-test-event.json
-
+# ──────────────────────────────────────────────────────────────────────────
 # Python
+# ──────────────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
 .venv/
 venv/
 env/
-.eggs/
-*.egg-info/
 .pytest_cache/
 
-# OS
+# ──────────────────────────────────────────────────────────────────────────
+# Editor / OS
+# ──────────────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
-
-# Editor
 .idea/
 .vscode/
 *.swp
+
+# ──────────────────────────────────────────────────────────────────────────
+# Ad-hoc debugging scripts (keep the repo lean)
+# ──────────────────────────────────────────────────────────────────────────
+debug_*.py
+scratch_*.py
