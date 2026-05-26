@@ -91,7 +91,6 @@ Run `activity-tracker --help` (or any subcommand `--help`) for full options.
 non-ticketed-activity-tracker/
 ├── README.md                  ← you are here
 ├── SETUP.md                   ← full step-by-step install guide
-├── ANNOUNCEMENT_EMAIL.md      ← draft emails / Slack copy for rollout
 ├── pyproject.toml             ← package config (installs the `activity-tracker` command)
 ├── requirements.txt           ← raw deps (alternative to `pip install -e .`)
 ├── run.py                     ← fallback entrypoint (`python run.py …`)
