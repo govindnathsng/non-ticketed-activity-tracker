@@ -526,7 +526,19 @@ def convert_calendar_cmd(in_path: str, out_path: str, default_activity_type: str
     table.add_column("Subject")
     table.add_column("People", justify="right")
 
-    time_re = re.compile(r"\s*(\d{1,2}):(\d{2})\s*[-–]\s*(\d{1,2}):(\d{2})\s*([A-Z]{2,4})?")
+    time_re = re.compile(
+        r"""\s*
+        (\d{1,2}):(\d{2})(?::\d{2})?            # HH:MM or HH:MM:SS  (start)
+        \s*[-–]\s*
+        (\d{1,2}):(\d{2})(?::\d{2})?            # HH:MM or HH:MM:SS  (end)
+        \s*
+        (?:                                      # optional trailing timezone, e.g.
+            [A-Z]{2,4}                           #   IST / UTC / EST
+          | \([A-Za-z0-9+:\-/\s]+\)              #   (GMT+5:30)  /  (Asia/Kolkata)
+        )?
+        \s*$""",
+        re.VERBOSE,
+    )
 
     for idx, item in enumerate(raw, 1):
         title = (item.get("title") or "").strip()
@@ -548,7 +560,7 @@ def convert_calendar_cmd(in_path: str, out_path: str, default_activity_type: str
         if not m:
             skipped.append((title, f"unrecognised time format {time_str!r}"))
             continue
-        sh, sm, eh, em, _tz = m.groups()
+        sh, sm, eh, em = m.groups()
         start_min = int(sh) * 60 + int(sm)
         end_min = int(eh) * 60 + int(em)
         duration = end_min - start_min
@@ -560,7 +572,11 @@ def convert_calendar_cmd(in_path: str, out_path: str, default_activity_type: str
 
         long_desc_parts = [f"Meeting time: {time_str}"]
         if include_participants and participants:
-            others = [p for p in participants if str(p).lower() != "govind-nath.s"]
+            others = [
+                str(p) for p in participants
+                if "govind-nath.s" not in str(p).lower()      # drop self
+                and "(room)" not in str(p).lower()             # drop conf-room entries
+            ]
             if others:
                 long_desc_parts.append(f"Participants: {', '.join(others)}")
         long_desc_parts.append(f"Duration: {duration} min")
