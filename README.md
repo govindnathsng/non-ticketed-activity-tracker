@@ -56,7 +56,7 @@ Python. You only need to be able to:
 
 That's it.
 
-## 3. How does it work? (in plain English)
+## 3. How does it work? 
 
 Imagine you trained a very fast intern. You give them:
 
