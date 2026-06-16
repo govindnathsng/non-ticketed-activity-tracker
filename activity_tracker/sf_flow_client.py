@@ -50,6 +50,7 @@ class TaskInput:
     activity_type: str = "Meeting"            # Meeting / Account Exploration and Maintenance / Internal PS work
     implementation_component: str = "None"    # one of 31 product choices
     revenue_generating: str = "None"          # Positive / Negative / None
+    is_client_facing: str = "No"              # Yes / No (required since Jun 2026 Flow update)
     internal_ps_work_type: str | None = None  # required only when activity_type='Internal PS work'
 
     # Optional "Related to" lookup (pick at most one)
@@ -105,6 +106,7 @@ class TaskInput:
             activity_type=obj.get("activity_type", "Meeting"),
             implementation_component=obj.get("implementation_component", "None"),
             revenue_generating=obj.get("revenue_generating", "None"),
+            is_client_facing=obj.get("is_client_facing", "No"),
             internal_ps_work_type=obj.get("internal_ps_work_type"),
             related_to=obj.get("related_to"),
             account_id=obj.get("account_id"),
@@ -542,6 +544,11 @@ def _build_screen1_fields(task: TaskInput) -> list[dict[str, Any]]:
     fields.append({"field": "Description", "value": task.subject, "isVisible": True})
     fields.append({
         "field": f"Revenue_Generating_Activity.revenue.{task.revenue_generating}.selected",
+        "value": True, "isVisible": True,
+    })
+    # NEW (Jun 2026): required dropdown — Yes/No
+    fields.append({
+        "field": f"Is_Client_facing.isClientFacingPCKL.{task.is_client_facing}.selected",
         "value": True, "isVisible": True,
     })
 

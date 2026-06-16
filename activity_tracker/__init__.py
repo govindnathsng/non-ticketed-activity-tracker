@@ -1,3 +1,3 @@
-"""Non-Ticketed Activity Tracker — Google Calendar → Salesforce Tasks."""
+"""Non-Ticketed Activity Tracker — bulk-create Salesforce PS Tasks from your meetings."""
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"

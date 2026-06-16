@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "activity-tracker"
-version = "0.1.0"
+version = "0.2.0"
 description = "Bulk-create Salesforce PS Tasks from your weekly meetings. Replays the Lightning Flow via your own browser session. 5-min setup, 30-sec/week use."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -14,9 +14,9 @@ authors = [
 ]
 keywords = ["salesforce", "automation", "lightning-flow", "calendar"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Environment :: Console",
-    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
     "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3",
@@ -30,46 +30,19 @@ dependencies = [
     "click>=8.1.7",
     "requests>=2.32.0",
     "rich>=13.7.1",
-    "PyYAML>=6.0.2",
     "python-dateutil>=2.9.0",
 ]
 
-[project.optional-dependencies]
-# Only needed if you use `fetch-calendar` (Google Calendar OAuth).
-# Skip these if you only use `convert-calendar` with a JSON dump.
-gcal = [
-    "google-api-python-client>=2.130.0",
-    "google-auth>=2.30.0",
-    "google-auth-oauthlib>=1.2.0",
-    "google-auth-httplib2>=0.2.0",
-]
-# Reserved for the (currently unused) standard Salesforce REST path.
-salesforce-rest = [
-    "simple-salesforce>=1.12.6",
-]
-dev = [
-    "build>=1.2.0",
-    "twine>=5.0.0",
-]
-
 [project.scripts]
-# After `pip install`, teammates get a global `activity-tracker` command.
 activity-tracker = "activity_tracker.cli:main"
 
 [project.urls]
 Source = "https://github.com/govindnathsng/non-ticketed-activity-tracker"
-Setup  = "https://github.com/govindnathsng/non-ticketed-activity-tracker/blob/main/SETUP.md"
 
-# ---------- packaging ----------
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["activity_tracker*"]
 exclude = ["tests*", ".venv*"]
 
 [tool.setuptools.package-data]
-# Ship the field schema with the package so users can read it after install.
 activity_tracker = ["py.typed"]
-
-# ---------- twine / build ----------
-[tool.distutils.bdist_wheel]
-universal = false

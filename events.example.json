@@ -4,31 +4,37 @@
     "duration_minutes": 30,
     "activity_type": "Meeting",
     "implementation_component": "None",
+    "is_client_facing": "No",
     "task_type": "Meeting",
     "task_sub_type": "Meeting",
     "activity_currency": "USD",
-    "status": "Completed"
+    "status": "Completed",
+    "activity_date": "2026-06-08"
   },
   {
     "subject": "Header bidding walkthrough with The Verge",
     "duration_minutes": 60,
     "activity_type": "Meeting",
     "implementation_component": "Header bidding",
+    "is_client_facing": "Yes",
     "revenue_generating": "Positive",
     "task_type": "Meeting",
     "task_sub_type": "Meeting",
     "activity_currency": "USD",
     "time_spent_in_minutes": 60,
-    "status": "Completed"
+    "status": "Completed",
+    "activity_date": "2026-06-09"
   },
   {
     "subject": "Wrote troubleshooting runbook for Vignette",
     "duration_minutes": 90,
     "activity_type": "Internal PS work",
     "internal_ps_work_type": "Knowledge documentation",
+    "is_client_facing": "No",
     "task_type": "Internal PS work",
     "task_sub_type": "Knowledge documentation",
     "activity_currency": "USD",
-    "status": "Completed"
+    "status": "Completed",
+    "activity_date": "2026-06-10"
   }
 ]

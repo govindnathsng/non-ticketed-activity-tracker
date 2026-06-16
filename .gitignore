@@ -3,26 +3,16 @@
 # ──────────────────────────────────────────────────────────────────────────
 session.curl.sh
 *.curl.sh
-startFlow.curl.sh
 *.har
 auth.json
-credentials.json
-token.json
 *.pem
 
 # ──────────────────────────────────────────────────────────────────────────
-# Per-user data (your meetings, your local config)
+# Per-user data (your meetings)
 # ──────────────────────────────────────────────────────────────────────────
-config.yaml
 raw-calendar.json
 events.json
-test-event.json
-test-events.json
-
-# ──────────────────────────────────────────────────────────────────────────
-# Rollout / comms drafts — kept local, not in the public-facing repo
-# ──────────────────────────────────────────────────────────────────────────
-ANNOUNCEMENT_EMAIL.md
+test-event*.json
 
 # ──────────────────────────────────────────────────────────────────────────
 # Local state & logs
@@ -61,7 +51,7 @@ Thumbs.db
 *.swp
 
 # ──────────────────────────────────────────────────────────────────────────
-# Ad-hoc debugging scripts (keep the repo lean)
+# Ad-hoc debugging scripts
 # ──────────────────────────────────────────────────────────────────────────
 debug_*.py
 scratch_*.py
