@@ -161,11 +161,15 @@ per working session (~20 seconds).
 Easiest way: ask your AI assistant (Ada, ChatGPT, Copilot, Reclaim,
 Notion AI, anything) with this exact prompt:
 
-> Show me all meetings from my calendar for the last 7 days in a single
-> chronological sequence. List every instance of recurring meetings
-> separately (do not group them). For each meeting, provide the exact
-> date, time (with timezone), full title, and the list of participants.
-> Present the final result as a clean JSON array.
+> Show me all meetings from my calendar **from `<START_DATE>` to
+> `<END_DATE>`** in a single chronological sequence. List every instance
+> of recurring meetings separately (do not group them). For each meeting,
+> provide the exact date, time (with timezone), full title, and the list
+> of participants. Present the final result as a clean JSON array.
+
+Fill in the dates before sending — for example, `7th June 2026` to
+`13th June 2026` for a one-week sync, or replace the whole bracketed
+phrase with `the last 7 days` if you'd rather let Ada pick the window.
 
 Save the answer as `raw-calendar.json` in the project folder.
 
