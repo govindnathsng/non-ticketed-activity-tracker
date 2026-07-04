@@ -792,7 +792,7 @@ tbody td {
     <div class="nav-logo">
       <img src="/static/logo.png" alt="Taboola">
     </div>
-    <span class="nav-title">Activity Tracker</span>
+    <span class="nav-title">Non Ticketed Activity Tracker</span>
     <div class="nav-divider"></div>
     <span class="nav-team">Pub PS</span>
   </div>
