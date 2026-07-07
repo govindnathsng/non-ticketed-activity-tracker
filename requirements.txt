@@ -4,3 +4,10 @@ click>=8.1.7
 requests>=2.32.0
 rich>=13.7.1
 python-dateutil>=2.9.0
+
+
+to run the code :
+cd ~/non-ticketed-activity-tracker
+source .venv/bin/activate && python server.py
+[or]
+python server.py
