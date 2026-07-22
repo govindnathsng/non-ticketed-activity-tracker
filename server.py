@@ -72,18 +72,44 @@ def import_calendar():
     normalized = []
     for item in parsed:
         entry: dict = {}
-        entry["title"] = item.get("title") or item.get("summary") or item.get("subject") or ""
+
+        # ── Title ──────────────────────────────────────────────────────
+        entry["title"] = (
+            item.get("title") or item.get("summary") or item.get("subject") or ""
+        )
+
+        # ── Start / end / date ─────────────────────────────────────────
+        # Accept both Google Calendar shape  (start / end)
+        # and legacy shape (start_time / end_time + date).
         start_raw = item.get("start_time") or item.get("start") or ""
         end_raw   = item.get("end_time")   or item.get("end")   or ""
+        # Derive the calendar date: prefer an explicit "date" field, fall back
+        # to the first 10 chars of the start timestamp (works for both
+        # "2026-07-09" and "2026-07-09T15:10:00+05:30").
         date_raw  = item.get("date") or (start_raw[:10] if start_raw else "")
-        entry["date"]         = date_raw
-        entry["start_time"]   = start_raw
-        entry["end_time"]     = end_raw
-        participants = item.get("participants") or item.get("attendees") or []
-        entry["participants"] = participants
+        entry["date"]       = date_raw
+        entry["start_time"] = start_raw
+        entry["end_time"]   = end_raw
+
+        # ── Participants ───────────────────────────────────────────────
+        # Google Calendar exports attendees as a flat list of strings or
+        # dicts; the legacy shape uses "participants" (list of strings or
+        # {"name": …, "email": …} dicts).  Normalise to a plain list.
+        raw_participants = item.get("participants") or item.get("attendees") or []
+        entry["participants"] = raw_participants
+
+        # ── Calendar description → Task description ────────────────────
+        # If the calendar event carries a description, pass it through so
+        # the CLI can append it to the long-form Task.Description field.
+        cal_desc = item.get("description")
+        if cal_desc and cal_desc != entry["title"]:
+            entry["description"] = cal_desc
+
+        # ── Copy any remaining fields the caller may have added ────────
         for k, v in item.items():
             if k not in entry:
                 entry[k] = v
+
         normalized.append(entry)
 
     RAW_CALENDAR.write_text(
