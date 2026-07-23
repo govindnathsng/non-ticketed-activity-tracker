@@ -1,0 +1,8 @@
+# pnpm workspace configuration
+# Overrides force every package in the dep tree to use patched versions,
+# even when a transitive dep (e.g. next's optional sharp dep) pins an older range.
+overrides:
+  # CVE-2026-13676, CVE-2026-16221 — Security policy bypass via Unicode hostname
+  fast-uri: ">=3.1.4"
+  # GHSA-f88m-g3jw-g9cj — libvips vulnerabilities (CVE-2026-33327, CVE-2026-33328)
+  sharp: ">=0.35.0"
