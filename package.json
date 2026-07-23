@@ -1,0 +1,9 @@
+{
+  "name": "activity-tracker",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Node.js tooling for the activity-tracker project (image processing utilities).",
+  "dependencies": {
+    "sharp": "^0.35.0"
+  }
+}
