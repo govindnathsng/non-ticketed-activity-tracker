@@ -196,7 +196,18 @@ def convert_calendar_cmd(in_path: str, out_path: str, default_activity_type: str
         display_time = time_str
         duration = 0
         if start_raw or end_raw:
-            if "(All Day)" in start_raw or "(All Day)" in end_raw:
+            # All-day detection: "(All Day)" suffix (legacy format) OR a bare
+            # YYYY-MM-DD date string with no time component (Google Calendar format).
+            def _is_all_day(s: str) -> bool:
+                if not s:
+                    return False
+                if "(All Day)" in s:
+                    return True
+                # Pure date: exactly 10 chars, no 'T' separator, no ':'
+                stripped = s.strip()
+                return len(stripped) == 10 and "T" not in stripped and ":" not in stripped
+
+            if _is_all_day(start_raw) or _is_all_day(end_raw):
                 skipped.append((title, "all-day event"))
                 continue
             try:

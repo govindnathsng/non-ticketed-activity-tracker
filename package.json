@@ -1,0 +1,12 @@
+{
+  "name": "activity-tracker",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Next.js front-end for the activity-tracker project.",
+  "dependencies": {
+    "next": "^16.2.11",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sharp": "^0.35.0"
+  }
+}
