@@ -75,7 +75,11 @@ def import_calendar():
 
         # ── Title ──────────────────────────────────────────────────────
         entry["title"] = (
-            item.get("title") or item.get("summary") or item.get("subject") or ""
+            item.get("title")
+            or item.get("meeting_name")
+            or item.get("summary")
+            or item.get("subject")
+            or ""
         )
 
         # ── Start / end / date ─────────────────────────────────────────

@@ -130,7 +130,7 @@ def convert_calendar_cmd(in_path: str, out_path: str, default_activity_type: str
                          excludes: tuple[str, ...], include_participants: bool) -> None:
     """Turn a raw calendar JSON dump into the events.json that flow-create consumes.
 
-    Two input shapes are accepted (per array element):
+    Input shapes accepted (per array element):
 
     1. ISO start/end times (recommended):
        {"date": "2026-06-08",
@@ -139,9 +139,13 @@ def convert_calendar_cmd(in_path: str, out_path: str, default_activity_type: str
         "title": "Standup",
         "participants": [{"name": "alice", "email": "a@x.com"}, ...]}
 
-    2. Legacy "HH:MM - HH:MM TZ" single string:
+    2. Legacy "HH:MM - HH:MM TZ" range string:
        {"date": "2026-05-19", "time": "08:45 - 09:15 IST",
         "title": "Standup", "participants": ["alice", "bob"]}
+
+    3. Single start time + duration_minutes (calendar export shape):
+       {"date": "2026-07-14", "time": "14:00", "duration_minutes": 60,
+        "meeting_name": "Sync", "attendees": ["a@x.com"]}
     """
     raw = json.loads(Path(in_path).read_text(encoding="utf-8"))
     if not isinstance(raw, list):
@@ -169,6 +173,10 @@ def convert_calendar_cmd(in_path: str, out_path: str, default_activity_type: str
         \s*$""",
         re.VERBOSE,
     )
+    single_time_re = re.compile(
+        r"""\s*(\d{1,2}):(\d{2})(?::\d{2})?\s*$""",
+        re.VERBOSE,
+    )
 
     def _participant_label(p: Any) -> str:
         if isinstance(p, dict):
@@ -176,12 +184,24 @@ def convert_calendar_cmd(in_path: str, out_path: str, default_activity_type: str
         return str(p).strip()
 
     for idx, item in enumerate(raw, 1):
-        title = (item.get("title") or "").strip()
+        title = (
+            item.get("title")
+            or item.get("meeting_name")
+            or item.get("summary")
+            or item.get("subject")
+            or ""
+        )
+        title = str(title).strip()
         date_str = (item.get("date") or "").strip()
-        time_str = (item.get("time") or "").strip()
+        time_str = str(item.get("time") or "").strip()
         start_raw = (item.get("start_time") or "").strip()
         end_raw = (item.get("end_time") or "").strip()
-        participants = item.get("participants") or []
+        participants = item.get("participants") or item.get("attendees") or []
+        explicit_duration = item.get("duration_minutes")
+        try:
+            explicit_duration_int = int(explicit_duration) if explicit_duration is not None else None
+        except (TypeError, ValueError):
+            explicit_duration_int = None
 
         if not title or not date_str:
             skipped.append((title or "(no title)", "missing title or date"))
@@ -196,18 +216,7 @@ def convert_calendar_cmd(in_path: str, out_path: str, default_activity_type: str
         display_time = time_str
         duration = 0
         if start_raw or end_raw:
-            # All-day detection: "(All Day)" suffix (legacy format) OR a bare
-            # YYYY-MM-DD date string with no time component (Google Calendar format).
-            def _is_all_day(s: str) -> bool:
-                if not s:
-                    return False
-                if "(All Day)" in s:
-                    return True
-                # Pure date: exactly 10 chars, no 'T' separator, no ':'
-                stripped = s.strip()
-                return len(stripped) == 10 and "T" not in stripped and ":" not in stripped
-
-            if _is_all_day(start_raw) or _is_all_day(end_raw):
+            if "(All Day)" in start_raw or "(All Day)" in end_raw:
                 skipped.append((title, "all-day event"))
                 continue
             try:
@@ -220,15 +229,30 @@ def convert_calendar_cmd(in_path: str, out_path: str, default_activity_type: str
             duration = int((end_dt - start_dt).total_seconds() // 60)
         else:
             m = time_re.match(time_str)
-            if not m:
-                skipped.append((title, f"unrecognised time format {time_str!r}"))
-                continue
-            sh, sm, eh, em = m.groups()
-            start_min = int(sh) * 60 + int(sm)
-            end_min = int(eh) * 60 + int(em)
-            duration = end_min - start_min
-            if duration <= 0:
-                duration += 24 * 60
+            if m:
+                sh, sm, eh, em = m.groups()
+                start_min = int(sh) * 60 + int(sm)
+                end_min = int(eh) * 60 + int(em)
+                duration = end_min - start_min
+                if duration <= 0:
+                    duration += 24 * 60
+            else:
+                m_single = single_time_re.match(time_str)
+                if m_single and explicit_duration_int and explicit_duration_int > 0:
+                    sh, sm = m_single.groups()
+                    start_min = int(sh) * 60 + int(sm)
+                    duration = explicit_duration_int
+                    end_min = start_min + duration
+                    display_time = (
+                        f"{int(sh):02d}:{int(sm):02d} - "
+                        f"{(end_min // 60) % 24:02d}:{end_min % 60:02d}"
+                    )
+                elif not time_str:
+                    skipped.append((title, "all-day event / no time"))
+                    continue
+                else:
+                    skipped.append((title, f"unrecognised time format {time_str!r}"))
+                    continue
 
         if duration <= 0:
             skipped.append((title, "non-positive duration"))
