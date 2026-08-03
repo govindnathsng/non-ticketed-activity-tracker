@@ -69,6 +69,27 @@ def import_calendar():
     if len(parsed) == 0:
         return jsonify({"ok": False, "error": "The array is empty — nothing to import."})
 
+    # ── Flatten grouped/nested shape ────────────────────────────────────
+    # Some exports group events by day: [{"date": "...", "events": [...]}].
+    # Detect that shape and flatten it into a plain list of event dicts,
+    # so the rest of the pipeline (which expects flat events) keeps working.
+    flat: list = []
+    for item in parsed:
+        if isinstance(item, dict) and isinstance(item.get("events"), list):
+            group_date = item.get("date")
+            for sub in item["events"]:
+                if not isinstance(sub, dict):
+                    continue
+                sub = dict(sub)  # avoid mutating the caller's data
+                if group_date and not sub.get("date"):
+                    sub["date"] = group_date
+                flat.append(sub)
+        elif isinstance(item, dict):
+            flat.append(item)
+    parsed = flat
+    if len(parsed) == 0:
+        return jsonify({"ok": False, "error": "No events found — the array was empty or contained no recognizable event objects."})
+
     normalized = []
     for item in parsed:
         entry: dict = {}
